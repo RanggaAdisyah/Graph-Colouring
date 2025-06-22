@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Mata Kuliah</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Jadwal Mata Kuliah</h1>
+        {% include 'partials/navbar.html' %}
+    </header>
+
+    <main class="schedule-view">
+        <div class="schedule-header">
+            <h2>Jadwal Semester Ganjil 2025</h2>
+            <div class="schedule-stats">
+                <span>Total Hari: {{ schedule|length }}</span>
+                <span>Total Mata Kuliah: {{ total_courses }}</span>
+                <span>Konflik: {{ total_conflicts }}</span>
+            </div>
+        </div>
+        {% if conflicts and conflicts|length > 0 %}
+        <div style="margin: 2rem 0;">
+            <h3>Daftar Konflik Jadwal</h3>
+            <table class="optimasi-table">
+                <thead>
+                    <tr>
+                        <th>Mata Kuliah 1</th>
+                        <th>Mata Kuliah 2</th>
+                        <th>Slot Waktu</th>
+                        <th>Mahasiswa</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for c in conflicts %}
+                    <tr>
+                        <td>{{ c.course1 }}</td>
+                        <td>{{ c.course2 }}</td>
+                        <td>{{ c.day }} {{ c.time_slot }}</td>
+                        <td>{{ c.students|join(', ') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+
+        <div class="schedule-container">
+            {% for day, courses in schedule.items() %}
+            <div class="time-slot">
+                <div class="day-header {% if day == 'Belum dijadwalkan' %}unscheduled{% endif %}">
+                    {{ day }}
+                </div>
+                <div class="courses-list">
+                    {% for course in courses %}
+                    <div class="course-card">
+                        <h4>{{ course.name }}</h4>
+                        <p>ID: {{ course.id }}</p>
+                        <div class="course-meta">
+                            {% if course.day and course.time_slot %}
+                                <span>Jadwal: {{ course.day }} {{ course.time_slot }}</span>
+                            {% elif course.schedule %}
+                                <span>Jadwal: {{ course.schedule }}</span>
+                            {% else %}
+                                <span>Jadwal: Belum diatur</span>
+                            {% endif %}
+                        </div>
+                        <div class="student-count">
+                            Mahasiswa: {{ course.student_count or 0 }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        <p>Sistem Penjadwalan dengan Graph Coloring &copy; 2025</p>
+    </footer>
+</body>
+</html>

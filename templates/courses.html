@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Mata Kuliah</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Manajemen Mata Kuliah</h1>
+        {% include 'partials/navbar.html' %}
+    </header>
+
+    <main class="management">
+        <section class="form-section">
+            <h2>Tambah Mata Kuliah Baru</h2>
+            <form action="{{ url_for('manage_courses') }}" method="POST">
+                <div class="form-group">
+                    <label for="name">Nama Mata Kuliah:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="day">Hari:</label>
+                    <select id="day" name="day">
+                        <option value="">Pilih Hari</option>
+                        <option value="Senin">Senin</option>
+                        <option value="Selasa">Selasa</option>
+                        <option value="Rabu">Rabu</option>
+                        <option value="Kamis">Kamis</option>
+                        <option value="Jumat">Jumat</option>
+                        <option value="Sabtu">Sabtu</option>
+                        <option value="Minggu">Minggu</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="time_slot">Waktu Kuliah:</label>
+                    <select id="time_slot" name="time_slot">
+                        <option value="">Pilih Waktu</option>
+                        <option value="07:00-08:30">07:00-08:30 (Pagi)</option>
+                        <option value="08:00-09:30">08:00-09:30</option>
+                        <option value="09:30-11:00">09:30-11:00</option>
+                        <option value="11:00-12:30">11:00-12:30</option>
+                        <option value="12:30-14:00">12:30-14:00 (Siang)</option>
+                        <option value="13:00-14:30">13:00-14:30</option>
+                        <option value="14:30-16:00">14:30-16:00</option>
+                        <option value="16:00-17:30">16:00-17:30</option>
+                        <option value="17:30-19:00">17:30-19:00 (Sore)</option>
+                        <option value="19:00-20:30">19:00-20:30 (Malam)</option>
+                        <option value="20:30-22:00">20:30-22:00 (Malam)</option>
+                    </select>
+                </div>
+                <button type="submit">Tambah Mata Kuliah</button>
+            </form>
+        </section>
+
+        <section class="list-section">
+            <h2>Daftar Mata Kuliah</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama Mata Kuliah</th>
+                        <th>Jadwal</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses %}
+                    <tr>
+                        <td>{{ course.id }}</td>
+                        <td>{{ course.name }}</td>
+                        <td>
+                            {% if course.schedule %}
+                                <span class="time-slot">{{ course.schedule }}</span>
+                            {% else %}
+                                <span class="time-slot empty">Belum diatur</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if course.id %}
+                            <div class="action-buttons">
+                                <form action="{{ url_for('update_course', id=course.id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Apakah Anda yakin ingin mengubah jadwal mata kuliah ini?');">
+                                    <select name="day" style="width: auto; margin-right: 0.5rem;">
+                                        <option value="">Hari</option>
+                                        <option value="Senin">Senin</option>
+                                        <option value="Selasa">Selasa</option>
+                                        <option value="Rabu">Rabu</option>
+                                        <option value="Kamis">Kamis</option>
+                                        <option value="Jumat">Jumat</option>
+                                        <option value="Sabtu">Sabtu</option>
+                                        <option value="Minggu">Minggu</option>
+                                    </select>
+                                    <select name="time_slot" onchange="this.form.submit()" style="width: auto; margin-right: 0.5rem;">
+                                        <option value="">Waktu</option>
+                                        <option value="07:00-08:30">07:00-08:30</option>
+                                        <option value="08:00-09:30">08:00-09:30</option>
+                                        <option value="09:30-11:00">09:30-11:00</option>
+                                        <option value="11:00-12:30">11:00-12:30</option>
+                                        <option value="12:30-14:00">12:30-14:00</option>
+                                        <option value="13:00-14:30">13:00-14:30</option>
+                                        <option value="14:30-16:00">14:30-16:00</option>
+                                        <option value="16:00-17:30">16:00-17:30</option>
+                                        <option value="17:30-19:00">17:30-19:00</option>
+                                        <option value="19:00-20:30">19:00-20:30</option>
+                                        <option value="20:30-22:00">20:30-22:00</option>
+                                    </select>
+                                </form>
+                                <form action="{{ url_for('delete_course', id=course.id) }}" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn-delete">Hapus</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            <span class="text-muted">Tidak dapat dihapus</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>Sistem Penjadwalan dengan Graph Coloring &copy; 2025</p>
+    </footer>
+
+    <script>
+        // Auto-submit form when both day and time are selected
+        document.addEventListener('DOMContentLoaded', function() {
+            const updateForms = document.querySelectorAll('form[action*="update"]');
+            
+            updateForms.forEach(form => {
+                const daySelect = form.querySelector('select[name="day"]');
+                const timeSelect = form.querySelector('select[name="time_slot"]');
+                
+                if (daySelect && timeSelect) {
+                    daySelect.addEventListener('change', function() {
+                        if (this.value && timeSelect.value) {
+                            form.submit();
+                        }
+                    });
+                    
+                    timeSelect.addEventListener('change', function() {
+                        if (this.value && daySelect.value) {
+                            form.submit();
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

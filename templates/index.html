@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistem Penjadwalan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Sistem Penjadwalan Mata Kuliah</h1>
+        {% include 'partials/navbar.html' %}
+    </header>
+
+    <main class="dashboard">
+        <section class="stats">
+            <div class="stat-card">
+                <h3>Jumlah Mata Kuliah</h3>
+                <p>{{ course_count }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Jumlah Mahasiswa</h3>
+                <p>{{ student_count }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Total Enrollment</h3>
+                <p>{{ enrollment_count }}</p>
+            </div>
+            <div class="stat-card">
+                <h3>Mata Kuliah Terjadwal</h3>
+                <p>{{ scheduled_count }}</p>
+            </div>
+        </section>
+
+        <section class="actions">
+            <a href="{{ url_for('manage_courses') }}" class="action-card">
+                <h3>Kelola Mata Kuliah</h3>
+                <p>Tambah/edit mata kuliah dengan jadwal</p>
+            </a>
+            <a href="{{ url_for('manage_students') }}" class="action-card">
+                <h3>Kelola Mahasiswa</h3>
+                <p>Tambah/edit mahasiswa</p>
+            </a>
+            <a href="{{ url_for('manage_enrollments') }}" class="action-card">
+                <h3>Kelola Enrollment</h3>
+                <p>Atur mata kuliah per mahasiswa</p>
+            </a>
+            <a href="{{ url_for('view_schedule') }}" class="action-card">
+                <h3>Lihat Jadwal</h3>
+                <p>Lihat jadwal mata kuliah</p>
+            </a>
+        </section>
+
+        <section class="quick-links">
+            <h2>Alur Kerja Cepat</h2>
+            <ol>
+                <li>Tambah mata kuliah dengan jadwal</li>
+                <li>Tambah mahasiswa</li>
+                <li>Enroll mahasiswa ke mata kuliah</li>
+                <li>Lihat jadwal mata kuliah</li>
+            </ol>
+        </section>
+    </main>
+
+    <footer>
+        <p>Sistem Penjadwalan dengan Graph Coloring &copy; 2025</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimasi Jadwal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Optimasi Jadwal Mata Kuliah</h1>
+        {% include 'partials/navbar.html' %}
+    </header>
+    <main class="optimasi-main">
+        <section>
+            <h2>Optimasi Penjadwalan</h2>
+            <div style="margin-bottom: 1.5rem;">
+                <form action="{{ url_for('optimasi') }}" method="post" style="display:inline;">
+                    <button type="submit" name="algorithm" value="greedy" class="btn-generate">Greedy Colouring (Welsh-Powell)</button>
+                </form>
+                <form action="{{ url_for('optimasi') }}" method="post" style="display:inline; margin-left: 1rem;">
+                    <button type="submit" name="algorithm" value="greedy_random" class="btn-generate">Greedy Colouring (Random Order)</button>
+                </form>
+                <form action="{{ url_for('optimasi') }}" method="post" style="display:inline; margin-left: 1rem;">
+                    <button type="submit" name="algorithm" value="dsatur" class="btn-generate">DSatur (Degree of Saturation)</button>
+                </form>
+            </div>
+            {% if computation_time is not none %}
+            <div style="margin: 1rem 0; color: #2980b9; font-weight: bold;">
+                Waktu komputasi: {{ '%.4f'|format(computation_time) }} detik
+            </div>
+            {% endif %}
+            {% if num_nodes is not none %}
+            <div style="margin-bottom: 1.5rem; background: #f8f9fa; padding: 1rem 2rem; border-radius: 8px; max-width: 900px;">
+                <b>Jumlah Simpul:</b> {{ num_nodes }}<br>
+                <b>Jumlah Konflik:</b> {{ num_edges }}<br>
+                {% if chromatic_number is not none %}<b>Chromatic Number:</b> {{ chromatic_number }}<br>{% endif %}
+                {% if conflict_time is not none %}<b>Waktu Pembuatan Konflik:</b> {{ '%.4f'|format(conflict_time) }} detik<br>{% endif %}
+                {% if coloring_time is not none %}<b>Waktu Pewarnaan Graf:</b> {{ '%.4f'|format(coloring_time) }} detik<br>{% endif %}
+                {% if computation_time is not none %}<b>Total Waktu Komputasi:</b> {{ '%.4f'|format(computation_time) }} detik{% endif %}
+            </div>
+            {% endif %}
+            <table class="optimasi-table">
+                <thead>
+                    <tr>
+                        <th>Nama Mata Kuliah</th>
+                        <th>Jumlah Konflik</th>
+                        <th>Warna (Slot)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set last_level = None %}
+                    {% for level, group in courses|groupby('conflict_count')|sort(reverse=true) %}
+                        <tr>
+                            <td colspan="3" style="font-weight:bold; background:#f8f9fa;">Conflict Level {{ level }}</td>
+                        </tr>
+                        {% for course in group %}
+                        <tr>
+                            <td>{{ course.name }}</td>
+                            <td>{{ course.conflict_count }}</td>
+                            <td>{% if course.day and course.time_slot %}{{ course.day }} {{ course.time_slot }}{% elif course.color %}Slot {{ course.color }}{% else %}<span class="text-muted">Belum dioptimasi</span>{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>Sistem Penjadwalan dengan Graph Coloring &copy; 2025</p>
+    </footer>
+</body>
+</html> 

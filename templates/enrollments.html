@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Enrollment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Manajemen Enrollment</h1>
+        {% include 'partials/navbar.html' %}
+    </header>
+
+    <main class="management">
+        <section class="form-section">
+            <h2>Enroll Mahasiswa ke Mata Kuliah</h2>
+            <form action="{{ url_for('manage_enrollments') }}" method="POST">
+                <div class="form-group">
+                    <label for="student_id">Mahasiswa:</label>
+                    <select id="student_id" name="student_id" required>
+                        <option value="">Pilih Mahasiswa</option>
+                        {% for student in students %}
+                        <option value="{{ student.id }}">{{ student.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="course_id">Mata Kuliah:</label>
+                    <select id="course_id" name="course_id" required>
+                        <option value="">Pilih Mata Kuliah</option>
+                        {% for course in courses %}
+                        <option value="{{ course.id }}">{{ course.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit">Enroll</button>
+            </form>
+        </section>
+
+        <section class="list-section">
+            <h2>Daftar Enrollment</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Mahasiswa</th>
+                        <th>Mata Kuliah</th>
+                        <th>Konflik</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrollments %}
+                    <tr>
+                        <td>{{ enrollment.student_name }}</td>
+                        <td>{{ enrollment.course_name }}</td>
+                        <td>
+                            {% if enrollment.has_conflict %}
+                            <span class="conflict-badge">Konflik</span>
+                            {% else %}
+                            <span class="no-conflict-badge">Aman</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form action="{{ url_for('delete_enrollment', student_id=enrollment.student_id, course_id=enrollment.course_id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn-delete">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>Sistem Penjadwalan dengan Graph Coloring &copy; 2025</p>
+    </footer>
+</body>
+</html>
