@@ -5,4 +5,5 @@
     <a href="{{ url_for('manage_enrollments') }}" {% if request.endpoint == 'manage_enrollments' %}class="active"{% endif %}>Enrollment</a>
     <a href="{{ url_for('view_schedule') }}" {% if request.endpoint == 'view_schedule' %}class="active"{% endif %}>Jadwal</a>
     <a href="{{ url_for('optimasi') }}" {% if request.endpoint == 'optimasi' %}class="active"{% endif %}>Optimasi</a>
+    <a href="{{ url_for('visualisasi_db') }}" {% if request.endpoint == 'visualisasi_db' %}class="active"{% endif %}>Visualisasi DB</a>
 </nav> 

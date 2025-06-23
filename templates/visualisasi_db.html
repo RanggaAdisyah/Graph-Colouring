@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualisasi Database</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/vis-network@9.1.2/dist/vis-network.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/vis-network@9.1.2/dist/vis-network.min.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <h1>Visualisasi Database (Graph)</h1>
+        {% include 'partials/navbar.html' %}
+    </header>
+    <main style="padding:2rem;">
+        <div id="graph" style="width:100%;height:600px;border:1px solid #eee;"></div>
+        <script>
+        fetch('{{ url_for("get_graph_data") }}')
+            .then(res => res.json())
+            .then(data => {
+                var nodes = new vis.DataSet(data.nodes);
+                var edges = new vis.DataSet(data.edges);
+                var container = document.getElementById('graph');
+                var network = new vis.Network(container, {nodes: nodes, edges: edges}, {
+                    physics: {stabilization: false},
+                    nodes: {
+                        shape: 'dot',
+                        size: 18,
+                        font: { size: 16 }
+                    },
+                    groups: {
+                        Course: { color: { background: '#3498db', border: '#2980b9' }, font: { color: 'black' } },
+                        Student: { color: { background: '#2ecc71', border: '#27ae60' }, font: { color: 'black' } }
+                    }
+                });
+            });
+        </script>
+    </main>
+</body>
+</html> 

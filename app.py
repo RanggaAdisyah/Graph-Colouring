@@ -249,5 +249,22 @@ def optimasi():
         """)
     return render_template('optimasi.html', courses=courses, computation_time=computation_time, num_nodes=num_nodes, num_edges=num_edges, chromatic_number=chromatic_number, conflict_time=conflict_time, coloring_time=coloring_time)
 
+@app.route('/visualisasi-db')
+def visualisasi_db():
+    return render_template('visualisasi_db.html')
+
+@app.route('/api/graph-data')
+def get_graph_data():
+    courses = run_query("MATCH (c:Course) RETURN c.id AS id, c.name AS name")
+    students = run_query("MATCH (s:Student) RETURN s.id AS id, s.name AS name")
+    enrollments = run_query("""
+        MATCH (s:Student)-[:ENROLLED_IN]->(c:Course)
+        RETURN s.id AS student_id, c.id AS course_id
+    """)
+    nodes = [{'id': c['id'], 'label': c['name'], 'group': 'Course'} for c in courses] + \
+            [{'id': s['id'], 'label': s['name'], 'group': 'Student'} for s in students]
+    edges = [{'from': e['student_id'], 'to': e['course_id']} for e in enrollments]
+    return jsonify({'nodes': nodes, 'edges': edges})
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
